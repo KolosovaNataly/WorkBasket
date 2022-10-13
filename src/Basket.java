@@ -1,28 +1,17 @@
 import java.io.*;
 
-public class Basket {
-    private static int[] prices = {45, 20, 80};
-    private static String[] products = {"Чай", "Булочка", "Шоколад"};
-    private static int[] quantity = new int[products.length];
+public class Basket implements Serializable {
+    private int[] prices;
+    private String[] products;
+    private int[] quantity;
     private StringBuilder str;
     private static int total;
 
+
     public Basket(int[] prices, String[] products, int[] quantity) {
-        Basket.prices = prices;
-        Basket.products = products;
-        Basket.quantity = quantity;
-    }
-
-    public static int[] getPrices() {
-        return prices;
-    }
-
-    public static String[] getProducts() {
-        return products;
-    }
-
-    public static int[] getQuantity() {
-        return quantity;
+        this.prices = prices;
+        this.products = products;
+        this.quantity = quantity;
     }
 
     public int addToCart(int productNum, int amount) {
@@ -41,7 +30,7 @@ public class Basket {
         for (int i = 0; i < quantity.length; i++) {
             if (quantity[i] != 0) {
                 String write = (products[i] + " - " + prices[i] + " руб/шт, " + quantity[i] + " шт, " + (quantity[i] * prices[i]) + " руб в сумме");
-                str.append(write + "\n");
+                str.append(write).append("\n");
                 System.out.println(write);
             }
         }
@@ -50,28 +39,34 @@ public class Basket {
         System.out.println(write);
     }
 
-    public void saveTxt(File textFile) throws IOException {
-        OutputStreamWriter out = null;
-        out = new OutputStreamWriter(new FileOutputStream(textFile));
-        out.write(str.toString());
-        System.out.println("Ваш список сохранен в файле ");
-        out.close();
+    public void saveBin(File file) {
+        try (ObjectOutputStream outBin = new ObjectOutputStream(new FileOutputStream(file))) {
+            outBin.writeUTF(str.toString());
+            System.out.println("Ваш список сохранен в файле ");
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
-    public static Basket loadFromTxtFile(File textFile) throws IOException {
-        BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(textFile)));
-        String[] textBasket;
-        while (input.ready()) {
-            textBasket = input.readLine().split(" ");
-            for (int i = 0; i < products.length; i++) {
-                String a = textBasket[0];
-                if (products[i].contains(a)) {
-                    quantity[i] = (Integer.parseInt(textBasket[4]));
-                    total += prices[i] * quantity[i];
+    public static Basket loadFromBinFile(File file) throws IOException {
+        ObjectInputStream inputBin = new ObjectInputStream(new FileInputStream(file));
+        String[] textBasket = inputBin.readUTF().split(" в сумме\n ");
+        String[] basketParts;
+        for (int i = 0; i < textBasket.length; i++) {
+            basketParts = textBasket[i].split(" ");
+            for (int j = 0; j < Main.products.length; j++) {
+                String a = basketParts[0];
+                if (Main.products[j].contains(a)) {
+                    Main.quantity[j] = (Integer.parseInt(basketParts[4]));
+                    total += Main.prices[j] * Main.quantity[j];
                 }
             }
         }
+        return new Basket(Main.prices, Main.products, Main.quantity);
+    }
 
-        return new Basket(prices, products, quantity);
+    public static int getTotal() {
+        return total;
     }
 }
+

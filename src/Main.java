@@ -1,33 +1,35 @@
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
+    static int[] prices = {45, 40, 80};
+    static String[] products = {"Чай", "Булочка", "Шоколад"};
+    static int[] quantity = new int[products.length];
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         int count = 0;
         int num = 0;
         int lot = 0;
-        Basket basket = new Basket(Basket.getPrices(), Basket.getProducts(), Basket.getQuantity());
+        Basket basket = new Basket(prices, products, quantity);
+
         madeDir();
         while (true) {
             if (count == 0) {
-                File oldFile = new File("direct/Basket.txt");
-                if (oldFile.isFile()) {
+                File oldFile = new File("directBin/Basket.bin");
+                if (oldFile.isFile() && Basket.getTotal() == 0) {
                     System.out.println("Хотите посмотреть прошлый список покупок? \nY - если ДА");
                     String ask = scanner.nextLine();
                     if (ask.equalsIgnoreCase("Y")) {
-                        basket = Basket.loadFromTxtFile(oldFile);
+                        basket = Basket.loadFromBinFile(oldFile);
                         basket.printCart();
                     }
                 }
-            }
-
-            System.out.println("Список возможных товаров для покупки");
-            for (int i = 0; i < Basket.getProducts().length; i++) {
-                System.out.printf("%d. %s %d руб/шт \n", i + 1, Basket.getProducts()[i], Basket.getPrices()[i]);
+                System.out.println("Список возможных товаров для покупки");
+                for (int i = 0; i < products.length; i++) {
+                    System.out.printf("%d. %s %d руб/шт \n", i + 1, products[i], prices[i]);
+                }
             }
             System.out.println("Выберите товар и количество или введите `end`");
             String input = scanner.nextLine();
@@ -48,25 +50,23 @@ public class Main {
             count = basket.addToCart(num, lot);
         }
         basket.printCart();
-        basket.saveTxt(madeFile());
+        basket.saveBin(madeFile());
     }
 
     public static void madeDir() {
-        File dir = new File("direct");
+        File dir = new File("directBin");
         if (dir.mkdir()) {
             System.out.println(dir.getAbsolutePath());
         }
         System.out.println("Путь к папке " + dir.getAbsolutePath());
     }
-
     public static File madeFile() {
-        File textFile = new File("direct/Basket.txt");
+        File textFile = new File("directBin/Basket.bin");
         try {
             if (textFile.createNewFile()) {
                 System.out.println("File added");
             }
         } catch (IOException e) {
-            System.out.println("Exсeption!!!!");
             throw new RuntimeException(e);
         }
         return textFile;
