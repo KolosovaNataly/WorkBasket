@@ -1,7 +1,6 @@
 import java.io.*;
 
 public class Basket implements Serializable {
-    private static final long serialVersionUID = 1234567899L;
     private int[] prices;
     private String[] products;
     private int[] quantity;
@@ -40,9 +39,9 @@ public class Basket implements Serializable {
         System.out.println(write);
     }
 
-    public void saveBin(File file, Basket basket) {
+    public void saveBin(File file) {
         try (FileOutputStream fos = new FileOutputStream(file.getName()); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(basket);
+            oos.writeObject(this);
             System.out.println("Ваш список сохранен в файле ");
         } catch (IOException e) {
             e.getMessage();

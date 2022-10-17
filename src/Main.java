@@ -50,7 +50,7 @@ public class Main {
             count = basket.addToCart(num, lot);
         }
         basket.printCart();
-        basket.saveBin(madeFile(), basket);
+        basket.saveBin(madeFile());
     }
 
     public static void madeDir() {
