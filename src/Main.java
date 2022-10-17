@@ -22,7 +22,7 @@ public class Main {
                     System.out.println("Хотите посмотреть прошлый список покупок? \nY - если ДА");
                     String ask = scanner.nextLine();
                     if (ask.equalsIgnoreCase("Y")) {
-                        basket = Basket.loadFromBinFile(oldFile);
+                        basket = Basket.loadFromBinFile(oldFile, basket);
                         basket.printCart();
                     }
                 }
@@ -50,7 +50,7 @@ public class Main {
             count = basket.addToCart(num, lot);
         }
         basket.printCart();
-        basket.saveBin(madeFile());
+        basket.saveBin(madeFile(), basket);
     }
 
     public static void madeDir() {
@@ -60,6 +60,7 @@ public class Main {
         }
         System.out.println("Путь к папке " + dir.getAbsolutePath());
     }
+
     public static File madeFile() {
         File textFile = new File("directBin/Basket.bin");
         try {

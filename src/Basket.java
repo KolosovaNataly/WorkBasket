@@ -1,6 +1,7 @@
 import java.io.*;
 
 public class Basket implements Serializable {
+    private static final long serialVersionUID = 1234567899L;
     private int[] prices;
     private String[] products;
     private int[] quantity;
@@ -39,30 +40,27 @@ public class Basket implements Serializable {
         System.out.println(write);
     }
 
-    public void saveBin(File file) {
-        try (ObjectOutputStream outBin = new ObjectOutputStream(new FileOutputStream(file))) {
-            outBin.writeUTF(str.toString());
+    public void saveBin(File file, Basket basket) {
+        try (FileOutputStream fos = new FileOutputStream(file.getName()); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(basket);
             System.out.println("Ваш список сохранен в файле ");
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+        } catch (IOException e) {
+            e.getMessage();
         }
     }
 
-    public static Basket loadFromBinFile(File file) throws IOException {
-        ObjectInputStream inputBin = new ObjectInputStream(new FileInputStream(file));
-        String[] textBasket = inputBin.readUTF().split(" в сумме\n ");
-        String[] basketParts;
-        for (int i = 0; i < textBasket.length; i++) {
-            basketParts = textBasket[i].split(" ");
-            for (int j = 0; j < Main.products.length; j++) {
-                String a = basketParts[0];
-                if (Main.products[j].contains(a)) {
-                    Main.quantity[j] = (Integer.parseInt(basketParts[4]));
-                    total += Main.prices[j] * Main.quantity[j];
-                }
-            }
+
+    public static Basket loadFromBinFile(File file, Basket basket) {
+        try (FileInputStream fis = new FileInputStream(file.getName()); ObjectInputStream ois = new ObjectInputStream(fis)) {
+            basket = (Basket) ois.readObject();
+        } catch (FileNotFoundException e) {
+            e.getMessage();
+        } catch (IOException e) {
+            e.getMessage();
+        } catch (ClassNotFoundException e) {
+            e.getMessage();
         }
-        return new Basket(Main.prices, Main.products, Main.quantity);
+        return basket;
     }
 
     public static int getTotal() {
