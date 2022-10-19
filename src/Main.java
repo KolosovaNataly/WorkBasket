@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
+    static int[] prices = {50, 14, 80};
+    static String[] products = {"Молоко", "Хлеб", "Авокадо"};
+    static int[] quantity = new int[products.length];
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         int count = 0;
         int num = 0;
         int lot = 0;
-        Basket basket = new Basket(Basket.getPrices(), Basket.getProducts(), Basket.getQuantity());
+        Basket basket = new Basket(prices,products,quantity);
         madeDir();
         while (true) {
             if (count == 0) {
@@ -26,8 +29,8 @@ public class Main {
             }
 
             System.out.println("Список возможных товаров для покупки");
-            for (int i = 0; i < Basket.getProducts().length; i++) {
-                System.out.printf("%d. %s %d руб/шт \n", i + 1, Basket.getProducts()[i], Basket.getPrices()[i]);
+            for (int i = 0; i < products.length; i++) {
+                System.out.printf("%d. %s %d руб/шт \n", i + 1, products[i], prices[i]);
             }
             System.out.println("Выберите товар и количество или введите `end`");
             String input = scanner.nextLine();

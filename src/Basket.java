@@ -1,28 +1,15 @@
 import java.io.*;
 
 public class Basket {
-    private static int[] prices = {45, 20, 80};
-    private static String[] products = {"Чай", "Булочка", "Шоколад"};
-    private static int[] quantity = new int[products.length];
+    private int[] prices;
+    private String[] products;
+    private int[] quantity;
     private StringBuilder str;
     private static int total;
-
     public Basket(int[] prices, String[] products, int[] quantity) {
-        Basket.prices = prices;
-        Basket.products = products;
-        Basket.quantity = quantity;
-    }
-
-    public static int[] getPrices() {
-        return prices;
-    }
-
-    public static String[] getProducts() {
-        return products;
-    }
-
-    public static int[] getQuantity() {
-        return quantity;
+        this.prices = prices;
+        this.products = products;
+        this.quantity = quantity;
     }
 
     public int addToCart(int productNum, int amount) {
@@ -63,15 +50,14 @@ public class Basket {
         String[] textBasket;
         while (input.ready()) {
             textBasket = input.readLine().split(" ");
-            for (int i = 0; i < products.length; i++) {
+            for (int i = 0; i < Main.products.length; i++) {
                 String a = textBasket[0];
-                if (products[i].contains(a)) {
-                    quantity[i] = (Integer.parseInt(textBasket[4]));
-                    total += prices[i] * quantity[i];
+                if (Main.products[i].contains(a)) {
+                    Main.quantity[i] = (Integer.parseInt(textBasket[4]));
+                    total += Main.prices[i] * Main.quantity[i];
                 }
             }
         }
-
-        return new Basket(prices, products, quantity);
+        return new Basket(Main.prices, Main.products, Main.quantity);
     }
 }
