@@ -6,6 +6,7 @@ public class Basket {
     private int[] quantity;
     private StringBuilder str;
     private static int total;
+
     public Basket(int[] prices, String[] products, int[] quantity) {
         this.prices = prices;
         this.products = products;
