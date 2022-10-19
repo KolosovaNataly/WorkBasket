@@ -1,6 +1,7 @@
 import java.io.*;
 
 public class Basket {
+    public static final String ARRAY_ELEMENTS_SEPARATOR = ";";
     private int[] prices;
     private String[] products;
     private int[] quantity;
@@ -38,13 +39,24 @@ public class Basket {
         System.out.println(write);
     }
 
-    public void saveTxt(File textFile) throws IOException {
-        OutputStreamWriter out = null;
-        out = new OutputStreamWriter(new FileOutputStream(textFile));
-        out.write(str.toString());
-        System.out.println("Ваш список сохранен в файле ");
-        out.close();
+    public void saveTxt(File textFile) {
+        try (PrintWriter out = new PrintWriter(textFile)) {
+            for (int e : quantity) {
+                out.print(e + ARRAY_ELEMENTS_SEPARATOR);
+            }
+            out.println();
+            for (String e : products) {
+                out.print(e + ARRAY_ELEMENTS_SEPARATOR);
+            }
+            out.println();
+            for (int e : prices) {
+                out.print(e + ARRAY_ELEMENTS_SEPARATOR);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     public static Basket loadFromTxtFile(File textFile) throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(textFile)));
