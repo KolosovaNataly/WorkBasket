@@ -48,7 +48,7 @@ public class Main {
                 System.out.println("Введена некорректная информация");
             }
             ClientLog.log(num, lot);
-            ClientLog.exportAsCSV(madeFileJson());
+            ClientLog.exportAsCSV(madeFileCsv());
             count = basket.addToCart(num, lot);
         }
         basket.printCart();
