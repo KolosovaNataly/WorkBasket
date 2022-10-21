@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -13,16 +12,16 @@ public class Main {
         int count = 0;
         int num = 0;
         int lot = 0;
-        Basket basket = new Basket(prices,products,quantity);
+        Basket basket = new Basket(prices, products, quantity);
         madeDir();
         while (true) {
             if (count == 0) {
-                File oldFile = new File("direct/Basket.txt");
+                File oldFile = new File("direct/Basket.json");
                 if (oldFile.isFile()) {
                     System.out.println("Хотите посмотреть прошлый список покупок? \nY - если ДА");
                     String ask = scanner.nextLine();
                     if (ask.equalsIgnoreCase("Y")) {
-                        basket = Basket.loadFromTxtFile(oldFile);
+                        basket = Basket.loadFromJsonFile(oldFile);
                         basket.printCart();
                     }
                 }
@@ -48,10 +47,12 @@ public class Main {
             } catch (NumberFormatException a) {
                 System.out.println("Введена некорректная информация");
             }
+            ClientLog.log(num, lot);
+            ClientLog.exportAsCSV(madeFileJson());
             count = basket.addToCart(num, lot);
         }
         basket.printCart();
-        basket.saveTxt(madeFile());
+        basket.saveJson(madeFileJson());
     }
 
     public static void madeDir() {
@@ -62,8 +63,21 @@ public class Main {
         System.out.println("Путь к папке " + dir.getAbsolutePath());
     }
 
-    public static File madeFile() {
-        File textFile = new File("direct/Basket.txt");
+    public static File madeFileJson() {
+        File textFile = new File("direct/Basket.json");
+        try {
+            if (textFile.createNewFile()) {
+                System.out.println("File added");
+            }
+        } catch (IOException e) {
+            System.out.println("Exсeption!!!!");
+            throw new RuntimeException(e);
+        }
+        return textFile;
+    }
+
+    public static File madeFileCsv() {
+        File textFile = new File("direct/log.csv");
         try {
             if (textFile.createNewFile()) {
                 System.out.println("File added");
@@ -75,5 +89,14 @@ public class Main {
         return textFile;
     }
 }
+
+
+
+
+
+
+
+
+
 
 

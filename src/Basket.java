@@ -1,6 +1,11 @@
+
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
 
-public class Basket {
+public class Basket implements Serializable {
     public static final String ARRAY_ELEMENTS_SEPARATOR = ";";
     private int[] prices;
     private String[] products;
@@ -12,6 +17,14 @@ public class Basket {
         this.prices = prices;
         this.products = products;
         this.quantity = quantity;
+    }
+
+    public int[] getPrices() {
+        return prices;
+    }
+
+    public int[] getQuantity() {
+        return quantity;
     }
 
     public int addToCart(int productNum, int amount) {
@@ -57,7 +70,6 @@ public class Basket {
         }
     }
 
-
     public static Basket loadFromTxtFile(File textFile) throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(textFile)));
         String[] textBasket;
@@ -73,4 +85,32 @@ public class Basket {
         }
         return new Basket(Main.prices, Main.products, Main.quantity);
     }
+
+    public void saveJson(File textFile) {
+        try (Writer writer = new FileWriter(textFile)) {
+            Gson gson = new Gson();
+            Basket newBasket = new Basket(prices, products, quantity);
+            gson.toJson(newBasket, writer);
+            System.out.println("Ваш список сохранен в файле ");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Basket loadFromJsonFile(File textFile) {
+        Basket oldBasket = null;
+        try (FileReader reader = new FileReader(textFile)) {
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            oldBasket = gson.fromJson(reader, Basket.class);
+            for (int i = 0; i < oldBasket.getQuantity().length; i++) {
+                total += oldBasket.getPrices()[i] * oldBasket.getQuantity()[i];
+            }
+            System.out.println("Корзина загружена");
+        } catch (Exception e) {
+            System.out.println("Файл не найден");
+        }
+        return oldBasket;
+    }
+
 }
