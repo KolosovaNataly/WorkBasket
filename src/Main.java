@@ -1,3 +1,7 @@
+import config.Load;
+import config.Log;
+import config.Save;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -7,26 +11,28 @@ public class Main {
     static String[] products = {"Молоко", "Хлеб", "Авокадо"};
     static int[] quantity = new int[products.length];
 
+    static Scanner scanner = new Scanner(System.in);
+
+    static Basket basket = new Basket(prices, products, quantity);
+
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
+
+        Load.load();
+        Log.log();
+        Save.save();
+
         int count = 0;
         int num = 0;
         int lot = 0;
-        Basket basket = new Basket(prices, products, quantity);
+
         madeDir();
         while (true) {
+            File oldFile = new File("direct/Basket.json");
             if (count == 0) {
-                File oldFile = new File("direct/Basket.json");
-                if (oldFile.isFile()) {
-                    System.out.println("Хотите посмотреть прошлый список покупок? \nY - если ДА");
-                    String ask = scanner.nextLine();
-                    if (ask.equalsIgnoreCase("Y")) {
-                        basket = Basket.loadFromJsonFile(oldFile);
-                        basket.printCart();
-                    }
+                if (oldFile.isFile() || Load.isEnabled()) {
+                    recoverBasket(oldFile);
                 }
             }
-
             System.out.println("Список возможных товаров для покупки");
             for (int i = 0; i < products.length; i++) {
                 System.out.printf("%d. %s %d руб/шт \n", i + 1, products[i], prices[i]);
@@ -47,12 +53,16 @@ public class Main {
             } catch (NumberFormatException a) {
                 System.out.println("Введена некорректная информация");
             }
-            ClientLog.log(num, lot);
-            ClientLog.exportAsCSV(madeFileCsv());
+            if (Log.isEnabled()) {
+                ClientLog.log(num, lot);
+                ClientLog.exportAsCSV(madeFileCsv());
+            }
             count = basket.addToCart(num, lot);
         }
         basket.printCart();
-        basket.saveJson(madeFileJson());
+        if (Save.isEnabled()) {
+            basket.saveJson(madeFileJson());
+        }
     }
 
     public static void madeDir() {
@@ -88,7 +98,19 @@ public class Main {
         }
         return textFile;
     }
+
+    public static void recoverBasket(File oldFile) {
+        if (oldFile.isFile()) {
+            System.out.println("Хотите посмотреть прошлый список покупок? \nY - если ДА");
+            String ask = scanner.nextLine();
+            if (ask.equalsIgnoreCase("Y")) {
+                basket = Basket.loadFromJsonFile(oldFile);
+                basket.printCart();
+            }
+        }
+    }
 }
+
 
 
 
